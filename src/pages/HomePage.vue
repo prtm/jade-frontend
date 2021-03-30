@@ -1,15 +1,7 @@
 <template>
-  <div class="container-fluid pl-4 pr-4">
-    <div class="row">
-      <div class="col-md-3"></div>
-      <div class="col-md-9">
-        <div :class="searchedName != '' ? 'visible' : 'invisible'">
-          Search Results For <strong>{{ searchedName }}</strong>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-3 mt-2">
+  <div class="container-fluid h-100 pl-4 pr-4">
+    <div class="row h-100">
+      <div class="col-md-3 pt-2 pb-2 side-bar">
         <Search
           placeholder="Search Name"
           @suggestionClick="getDetailsbyName"
@@ -17,7 +9,23 @@
           :items="searchSuggestions"
           @onInputChange="onInputChange"
         />
-        <div v-if="lastUpdated != ''" class="mt-3 ml-1 text-left">
+        <div class="text-left font-weight-bold mb-2 mt-2 side-bar-header">
+          A BSE bhav browser for the activity that has taken place in the market
+        </div>
+        <div
+          :class="[
+            searchedName != '' ? 'visible' : 'invisible',
+            'text-left',
+            'mt-2',
+          ]"
+          style="font-size: 0.95rem"
+        >
+          Search Results For <strong>{{ searchedName }}</strong>
+        </div>
+        <div
+          v-if="lastUpdated != ''"
+          class="mt-3 ml-1 d-flex justify-content-left"
+        >
           Last Updated: <strong>{{ lastUpdated }}</strong>
         </div>
         <div class="mt-2 ml-1 d-flex justify-content-left">
@@ -30,7 +38,7 @@
         </div>
       </div>
       <div class="col-md-9 mt-2">
-        <div>
+        <div class="h-75">
           <table id="data-table" class="table table-striped">
             <thead class="thead-dark">
               <tr>
@@ -39,7 +47,7 @@
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody v-if="!isLoading">
               <tr v-for="(row, i) in displayedData" :key="i">
                 <td class="text-left" v-for="(key, j) in header_names" :key="j">
                   {{ row[key] }}
@@ -47,35 +55,16 @@
               </tr>
             </tbody>
           </table>
+          <div
+            v-if="isLoading"
+            class="mt-2 mb-2 h-100 d-flex align-items-center justify-content-center"
+          >
+            <Loader />
+          </div>
         </div>
         <div class="row d-flex justify-content-center">
           <div class="clearfix btn-group" v-if="displayedData.length >= 10">
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-secondary"
-              v-if="page != 1"
-              @click="updatePage(page - 1)"
-            >
-              prev
-            </button>
-            <button
-              type="button"
-              class="btn btn-sm btn-outline-secondary"
-              v-for="pageNumber in pages.slice(page - 1, page + 10)"
-              :class="pageNumber == page ? 'text-primary' : 'text-secondary'"
-              :key="pageNumber"
-              @click="updatePage(pageNumber)"
-            >
-              {{ pageNumber }}
-            </button>
-            <button
-              type="button"
-              @click="updatePage(page + 1)"
-              v-if="page < pages.length"
-              class="btn btn-sm btn-outline-secondary"
-            >
-              next
-            </button>
+            <Pagination :currentPage="currentPage" :pages="pages" />
           </div>
         </div>
       </div>
@@ -86,6 +75,8 @@
 <script>
 import { apiCall } from "@/utils/api";
 import Search from "../components/Search";
+import Loader from "../components/Loader.vue";
+import Pagination from "../components/Pagination.vue";
 
 export default {
   name: "HomePage",
@@ -94,13 +85,14 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       searchSuggestions: [],
       value: "",
       lastUpdated: "",
       bhavData: [],
       totalCount: 0,
       header_names: ["SC_NAME", "SC_CODE", "OPEN", "CLOSE", "LOW", "HIGH"],
-      page: 1,
+      currentPage: 1,
       perPage: 15,
       pages: [],
       lastSearchInputLength: 0,
@@ -120,13 +112,13 @@ export default {
       return this.paginate(this.bhavData);
     },
   },
-  components: { Search },
+  components: { Search, Loader, Pagination },
   methods: {
     paginate(data) {
-      let page = this.page;
+      let currentPage = this.currentPage;
       let perPage = this.perPage;
-      let from = page * perPage - perPage;
-      let to = page * perPage;
+      let from = currentPage * perPage - perPage;
+      let to = currentPage * perPage;
       return data.slice(from, to);
     },
     setPages() {
@@ -168,6 +160,7 @@ export default {
     },
     getDetailsbyName(value) {
       // on click of suggestion
+      this.isLoading = true;
       this.lastSearchInputLength = value.length;
       const url = `market/search?q=${value}`;
       apiCall({ url, method: "get" })
@@ -176,22 +169,27 @@ export default {
           this.bhavData = [response.results];
           this.totalCount = 1;
           this.searchedName = value;
+          this.isLoading = false;
         })
         .catch((error) => {
           console.log(error);
+          this.isLoading = false;
         });
     },
     getInitialBhavData() {
       const url = `market/`;
+      this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
           console.log(response);
           this.bhavData = response.results;
           this.totalCount = response.count;
           this.lastUpdated = response["last_updated"];
+          this.isLoading = false;
         })
         .catch((error) => {
           console.log(error);
+          this.isLoading = false;
         });
     },
     onInputChange(q) {
@@ -215,22 +213,25 @@ export default {
       this.lastSearchInputLength = q.length;
     },
     updatePage(newPageValue) {
-      if (this.page == newPageValue) {
+      if (this.currentPage == newPageValue) {
         return;
       }
-      this.page = newPageValue;
+      this.currentPage = newPageValue;
       // const totalPage = Math.ceil(this.totalCount / this.perPage);
       const start = this.perPage * (newPageValue - 1);
       const stop = this.perPage * newPageValue;
       const url = `market/?start=${start}=&stop=${stop}`;
+      this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
           console.log(response);
           this.bhavData = response.results;
           this.totalCount = response.count;
+          this.isLoading = false;
         })
         .catch((error) => {
           console.log(error);
+          this.isLoading = false;
         });
     },
   },
@@ -252,5 +253,11 @@ li {
 }
 a {
   color: #42b983;
+}
+.side-bar {
+  background-color: #e5e5e5;
+}
+.side-bar-header {
+  font-size: 1.3rem;
 }
 </style>

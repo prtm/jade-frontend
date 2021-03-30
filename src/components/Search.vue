@@ -1,6 +1,20 @@
 <template>
   <div>
-    <div class="autocomplete">
+    <div class="autocomplete form-group has-search">
+      <span class="form-control-feedback">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-search"
+          viewBox="0 0 16 16"
+        >
+          <path
+            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+          />
+        </svg>
+      </span>
       <input
         type="search"
         :placeholder="placeholder"
@@ -11,14 +25,23 @@
         @keyup.down="onArrowDown"
         @keyup.up="onArrowUp"
         @keyup.enter="onEnter"
+        :autocomplete="currentInputLength >= 3 ? 'on' : 'off'"
       />
+      <div
+        class="text-danger text-left"
+        v-if="(currentInputLength > 0) & (currentInputLength < 3)"
+      >
+        Enter atleast 3 characters
+      </div>
       <ul
         id="autocomplete-results"
         style="display: grid"
         v-show="isOpen"
         class="list-group autocomplete-results"
       >
-        <li class="loading list-group-item" v-if="isLoading">Loading results...</li>
+        <li class="loading list-group-item" v-if="isLoading">
+          Loading results...
+        </li>
         <li
           v-else
           v-for="(result, i) in results"
@@ -64,6 +87,7 @@ export default {
       search: "",
       isLoading: false,
       arrowCounter: 0,
+      currentInputLength: 0,
     };
   },
 
@@ -165,5 +189,21 @@ a {
 }
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: searchfield-cancel-button;
+}
+
+.has-search .form-control {
+  padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 2.375rem;
+  height: 2.375rem;
+  line-height: 2.375rem;
+  text-align: center;
+  pointer-events: none;
+  color: #aaa;
 }
 </style>
