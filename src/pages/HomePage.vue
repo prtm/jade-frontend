@@ -41,9 +41,9 @@
             :displayData="displayData"
             :isBodyShown="!isLoading"
           />
-          <div v-if="isLoading" class="mt-5 mb-2 h-100">
+          <!-- <div v-if="isLoading" class="mt-5 mb-2 h-100">
             <Loader />
-          </div>
+          </div> -->
         </div>
         <div class="row">
           <div v-if="displayData.length >= 10">
@@ -62,7 +62,7 @@
 <script>
 import { apiCall } from "@/utils/api";
 import Search from "../components/Search";
-import Loader from "../components/Loader.vue";
+// import Loader from "../components/Loader.vue";
 import Pagination from "../components/Pagination.vue";
 import Table from "../components/Table.vue";
 
@@ -100,7 +100,12 @@ export default {
       return this.paginate(this.bhavData);
     },
   },
-  components: { Search, Loader, Pagination, Table },
+  components: {
+    Search,
+    // Loader,
+    Pagination,
+    Table,
+  },
   methods: {
     paginate(data) {
       let currentPage = this.currentPage;
@@ -205,7 +210,6 @@ export default {
         return;
       }
       this.currentPage = newPageValue;
-      // const totalPage = Math.ceil(this.totalCount / this.perPage);
       const start = this.perPage * (newPageValue - 1);
       const stop = this.perPage * newPageValue;
       const url = `market/?start=${start}=&stop=${stop}`;
