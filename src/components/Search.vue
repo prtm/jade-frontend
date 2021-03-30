@@ -1,0 +1,169 @@
+<template>
+  <div>
+    <div class="autocomplete">
+      <input
+        type="search"
+        :placeholder="placeholder"
+        class="form-control mr-2"
+        id="inputSearch"
+        @input="onChange"
+        v-model="search"
+        @keyup.down="onArrowDown"
+        @keyup.up="onArrowUp"
+        @keyup.enter="onEnter"
+      />
+      <ul
+        id="autocomplete-results"
+        style="display: grid"
+        v-show="isOpen"
+        class="list-group autocomplete-results"
+      >
+        <li class="loading list-group-item" v-if="isLoading">Loading results...</li>
+        <li
+          v-else
+          v-for="(result, i) in results"
+          :key="i"
+          @click="setResult(result)"
+          class="list-group-item"
+          :class="{ 'is-active': i === arrowCounter }"
+        >
+          {{ result }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+/* eslint-disable */
+export default {
+  name: "autocomplete",
+  template: "#autocomplete",
+  props: {
+    items: {
+      type: Array,
+      required: false,
+      default: [],
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: "Search...",
+    },
+    isAsync: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      isOpen: false,
+      results: [],
+      search: "",
+      isLoading: false,
+      arrowCounter: 0,
+    };
+  },
+
+  methods: {
+    onChange() {
+      this.$emit("onInputChange", this.search);
+      if (this.isAsync) {
+        this.isLoading = true;
+      } else {
+        this.filterResults();
+        this.isOpen = true;
+      }
+    },
+
+    filterResults() {
+      this.results = this.items.filter((item) => {
+        return item.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+      });
+    },
+    setResult(result) {
+      this.$emit("suggestionClick", result);
+      this.search = result;
+      this.isOpen = false;
+    },
+    onArrowDown(evt) {
+      if (this.arrowCounter < this.results.length) {
+        this.arrowCounter = this.arrowCounter + 1;
+      }
+    },
+    onArrowUp() {
+      if (this.arrowCounter > 0) {
+        this.arrowCounter = this.arrowCounter - 1;
+      }
+    },
+    onEnter() {
+      this.search = this.results[this.arrowCounter];
+      this.isOpen = false;
+      this.arrowCounter = -1;
+    },
+    handleClickOutside(evt) {
+      if (!this.$el.contains(evt.target)) {
+        this.isOpen = false;
+        this.arrowCounter = -1;
+      }
+    },
+  },
+  watch: {
+    items: function (val, oldValue) {
+      if (val.length !== oldValue.length) {
+        this.results = val;
+        this.isLoading = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener("click", this.handleClickOutside);
+  },
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.autocomplete {
+  position: relative;
+}
+
+.autocomplete-results {
+  position: absolute;
+  text-align: left;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-results li {
+  cursor: pointer;
+  /* background-color: #fff;  */
+}
+
+.autocomplete-result.is-active,
+.autocomplete-result:hover {
+  background-color: #4aae9b;
+  color: white;
+}
+h3 {
+  margin: 40px 0 0;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #42b983;
+}
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: searchfield-cancel-button;
+}
+</style>
