@@ -9,23 +9,20 @@
           :items="searchSuggestions"
           @onInputChange="onInputChange"
         />
-        <div class="text-left font-weight-bold mb-2 mt-2 side-bar-header">
+        <div class="text-start font-weight-bold mb-2 mt-3 side-bar-header">
           A BSE bhav browser for the activity that has taken place in the market
         </div>
         <div
           :class="[
             searchedName != '' ? 'visible' : 'invisible',
-            'text-left',
             'mt-2',
+            'text-start',
           ]"
           style="font-size: 0.95rem"
         >
           Search Results For <strong>{{ searchedName }}</strong>
         </div>
-        <div
-          v-if="lastUpdated != ''"
-          class="mt-3 ml-1 d-flex justify-content-left"
-        >
+        <div v-if="lastUpdated != ''" class="mt-3 ml-1 text-start">
           Last Updated: <strong>{{ lastUpdated }}</strong>
         </div>
         <div class="mt-2 ml-1 d-flex justify-content-left">
@@ -38,33 +35,23 @@
         </div>
       </div>
       <div class="col-md-9 mt-2">
-        <div class="h-75">
-          <table id="data-table" class="table table-striped">
-            <thead class="thead-dark">
-              <tr>
-                <th class="text-left" v-for="(row, i) in header_names" :key="i">
-                  {{ row }}
-                </th>
-              </tr>
-            </thead>
-            <tbody v-if="!isLoading">
-              <tr v-for="(row, i) in displayedData" :key="i">
-                <td class="text-left" v-for="(key, j) in header_names" :key="j">
-                  {{ row[key] }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div
-            v-if="isLoading"
-            class="mt-2 mb-2 h-100 d-flex align-items-center justify-content-center"
-          >
+        <div>
+          <Table
+            :headerList="headerList"
+            :displayData="displayData"
+            :isBodyShown="!isLoading"
+          />
+          <div v-if="isLoading" class="mt-5 mb-2 h-100">
             <Loader />
           </div>
         </div>
-        <div class="row d-flex justify-content-center">
-          <div class="clearfix btn-group" v-if="displayedData.length >= 10">
-            <Pagination :currentPage="currentPage" :pages="pages" />
+        <div class="row">
+          <div v-if="displayData.length >= 10">
+            <Pagination
+              @onButtonClick="updatePage"
+              :currentPage="currentPage"
+              :pages="pages"
+            />
           </div>
         </div>
       </div>
@@ -77,6 +64,7 @@ import { apiCall } from "@/utils/api";
 import Search from "../components/Search";
 import Loader from "../components/Loader.vue";
 import Pagination from "../components/Pagination.vue";
+import Table from "../components/Table.vue";
 
 export default {
   name: "HomePage",
@@ -91,7 +79,7 @@ export default {
       lastUpdated: "",
       bhavData: [],
       totalCount: 0,
-      header_names: ["SC_NAME", "SC_CODE", "OPEN", "CLOSE", "LOW", "HIGH"],
+      headerList: ["SC_NAME", "SC_CODE", "OPEN", "CLOSE", "LOW", "HIGH"],
       currentPage: 1,
       perPage: 15,
       pages: [],
@@ -108,11 +96,11 @@ export default {
     },
   },
   computed: {
-    displayedData() {
+    displayData() {
       return this.paginate(this.bhavData);
     },
   },
-  components: { Search, Loader, Pagination },
+  components: { Search, Loader, Pagination, Table },
   methods: {
     paginate(data) {
       let currentPage = this.currentPage;
