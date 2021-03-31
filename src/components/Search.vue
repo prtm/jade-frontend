@@ -46,7 +46,7 @@
           v-else
           v-for="(result, i) in items"
           :key="i"
-          @click="setResult(result)"
+          @click="suggestionClick(result)"
           class="list-group-item list-group-item-action"
           :class="{ 'is-active': i === arrowCounter }"
         >
@@ -90,9 +90,9 @@ export default {
       this.$emit("onInputChange", this.search);
       this.isOpen = true;
     },
-    setResult(result) {
-      this.arrowCounter = -1;
+    suggestionClick(result) {
       this.$emit("suggestionClick", result);
+      this.arrowCounter = -1;
       this.search = result;
       this.isOpen = false;
     },
@@ -107,9 +107,13 @@ export default {
       }
     },
     onEnter() {
-      this.search = this.items[this.arrowCounter];
       this.isOpen = false;
-      this.$emit("suggestionClick", this.search);
+      if ((this.arrowCounter = -1)) {
+        this.$emit("searchByPrefix", this.search);
+      } else {
+        this.search = this.items[this.arrowCounter];
+        this.$emit("suggestionClick", this.search);
+      }
       this.arrowCounter = -1;
     },
     handleClickOutside(evt) {

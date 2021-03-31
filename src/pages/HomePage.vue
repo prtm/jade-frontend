@@ -15,7 +15,8 @@
       <div class="col-md-3 pt-2 pb-2 side-bar">
         <Search
           placeholder="Search Name"
-          @suggestionClick="getDetailsbyName"
+          @searchByPrefix="searchDetailsbyNamePrefix"
+          @suggestionClick="searchDetailsbyExactName"
           class="mr-2"
           :items="searchSuggestions"
           @onInputChange="onInputChange"
@@ -42,7 +43,7 @@
             tabindex="-1"
             role="button"
             aria-disabled="true"
-            :href="`${process.env.VUE_APP_SERVER_URL}/market/download-bhav-data/?q=${searchedName}`"
+            :href="`${baseURL}/market/download-bhav-data/?q=${searchedName}`"
           >
             Download CSV
           </a>
@@ -60,7 +61,7 @@
           </div>
         </div>
         <div class="row">
-          <div v-if="(displayData.length >= 10) & !isLoading">
+          <div v-if="(displayData.length > perPage) & !isLoading">
             <Pagination
               @onButtonClick="updatePage"
               :currentPage="currentPage"
@@ -87,6 +88,7 @@ export default {
   },
   data() {
     return {
+      baseURL: process.env.VUE_APP_SERVER_URL,
       isLoading: false,
       searchSuggestions: [],
       value: "",
@@ -135,15 +137,15 @@ export default {
         this.pages.push(index);
       }
     },
-    getDetailsbyName(value) {
+    searchDetailsbyExactName(value) {
       // on click of suggestion
       this.isLoading = true;
       this.lastSearchInputLength = value.length;
-      const url = `market/search?q=${value}`;
+      const url = `/market/search-by-extract-name/?q=${value}`;
       apiCall({ url, method: "get" })
         .then((response) => {
           console.log(response);
-          this.bhavData = response.results;
+          this.bhavData = [response.results];
           this.totalCount = 1;
           this.searchedName = value;
           this.isLoading = false;
@@ -153,8 +155,26 @@ export default {
           this.isLoading = false;
         });
     },
+    searchDetailsbyNamePrefix(value) {
+      // on click of suggestion
+      this.isLoading = true;
+      this.lastSearchInputLength = value.length;
+      const url = `/market/search/?q=${value}`;
+      apiCall({ url, method: "get" })
+        .then((response) => {
+          console.log(response);
+          this.bhavData = response.results;
+          this.totalCount = response.results.length;
+          this.searchedName = value;
+          this.isLoading = false;
+        })
+        .catch((error) => {
+          console.log(error);
+          this.isLoading = false;
+        });
+    },
     getInitialBhavData() {
-      const url = `market/`;
+      const url = `/market/`;
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
@@ -171,7 +191,7 @@ export default {
     },
     onInputChange(q) {
       if (q.length >= 2) {
-        const url = `market/search-suggestions/?q=${q}`;
+        const url = `/market/search-suggestions/?q=${q}`;
         apiCall({ url, method: "get" })
           .then((response) => {
             console.log(response);
@@ -196,7 +216,7 @@ export default {
       this.currentPage = newPageValue;
       const start = this.perPage * (newPageValue - 1);
       const stop = this.perPage * newPageValue;
-      const url = `market/?start=${start}=&stop=${stop}`;
+      const url = `/market/?start=${start}=&stop=${stop}`;
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
