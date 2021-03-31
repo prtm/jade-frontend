@@ -26,12 +26,15 @@
           Last Updated: <strong>{{ lastUpdated }}</strong>
         </div>
         <div class="mt-2 ml-1 d-flex justify-content-left">
-          <button
-            class="btn btn-primary mt-2"
-            @click="download_table_as_csv('data-table')"
+          <a
+            class="btn btn-primary mt-2 text-white"
+            tabindex="-1"
+            role="button"
+            aria-disabled="true"
+            :href="`http://localhost:8000/market/download-bhav-data/?q=${searchedName}`"
           >
             Download CSV
-          </button>
+          </a>
         </div>
       </div>
       <div class="col-md-9 mt-2">
@@ -41,12 +44,12 @@
             :displayData="displayData"
             :isBodyShown="!isLoading"
           />
-          <!-- <div v-if="isLoading" class="mt-5 mb-2 h-100">
+          <div v-if="isLoading" class="mt-5 mb-2 h-100">
             <Loader />
-          </div> -->
+          </div>
         </div>
         <div class="row">
-          <div v-if="displayData.length >= 10">
+          <div v-if="(displayData.length >= 10) & !isLoading">
             <Pagination
               @onButtonClick="updatePage"
               :currentPage="currentPage"
@@ -62,7 +65,7 @@
 <script>
 import { apiCall } from "@/utils/api";
 import Search from "../components/Search";
-// import Loader from "../components/Loader.vue";
+import Loader from "../components/Loader.vue";
 import Pagination from "../components/Pagination.vue";
 import Table from "../components/Table.vue";
 
@@ -102,7 +105,7 @@ export default {
   },
   components: {
     Search,
-    // Loader,
+    Loader,
     Pagination,
     Table,
   },
@@ -121,36 +124,6 @@ export default {
         this.pages.push(index);
       }
     },
-    download_table_as_csv(table_id, separator = ",") {
-      var rows = document.querySelectorAll("table#" + table_id + " tr");
-      var csv = [];
-      for (var i = 0; i < rows.length; i++) {
-        var row = [],
-          cols = rows[i].querySelectorAll("td, th");
-        for (var j = 0; j < cols.length; j++) {
-          var data = cols[j].innerText
-            .replace(/(\r\n|\n|\r)/gm, "")
-            .replace(/(\s\s)/gm, " ");
-          data = data.replace(/"/g, '""');
-          row.push('"' + data + '"');
-        }
-        csv.push(row.join(separator));
-      }
-      var csv_string = csv.join("\n");
-      var filename =
-        "export_" + table_id + "_" + new Date().toLocaleDateString() + ".csv";
-      var link = document.createElement("a");
-      link.style.display = "none";
-      link.setAttribute("target", "_blank");
-      link.setAttribute(
-        "href",
-        "data:text/csv;charset=utf-8," + encodeURIComponent(csv_string)
-      );
-      link.setAttribute("download", filename);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    },
     getDetailsbyName(value) {
       // on click of suggestion
       this.isLoading = true;
@@ -159,7 +132,7 @@ export default {
       apiCall({ url, method: "get" })
         .then((response) => {
           console.log(response);
-          this.bhavData = [response.results];
+          this.bhavData = response.results;
           this.totalCount = 1;
           this.searchedName = value;
           this.isLoading = false;
@@ -186,7 +159,7 @@ export default {
         });
     },
     onInputChange(q) {
-      if (q.length >= 3) {
+      if (q.length >= 2) {
         const url = `market/search-suggestions/?q=${q}`;
         apiCall({ url, method: "get" })
           .then((response) => {

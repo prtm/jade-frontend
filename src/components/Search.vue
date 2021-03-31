@@ -22,16 +22,17 @@
         id="inputSearch"
         @input="onChange"
         v-model="search"
+        @keyup="selectValue"
         @keyup.down="onArrowDown"
         @keyup.up="onArrowUp"
         @keyup.enter="onEnter"
-        :autocomplete="currentInputLength >= 3 ? 'on' : 'off'"
+        :autocomplete="currentInputLength >= 2 ? 'on' : 'off'"
       />
       <div
         class="text-danger text-left"
-        v-if="(currentInputLength > 0) & (currentInputLength < 3)"
+        v-if="(currentInputLength > 0) & (currentInputLength < 2)"
       >
-        Enter atleast 3 characters
+        Enter atleast 2 characters
       </div>
       <ul
         id="autocomplete-results"
@@ -44,10 +45,10 @@
         </li>
         <li
           v-else
-          v-for="(result, i) in results"
+          v-for="(result, i) in items"
           :key="i"
           @click="setResult(result)"
-          class="list-group-item"
+          class="list-group-item list-group-item-action"
           :class="{ 'is-active': i === arrowCounter }"
         >
           {{ result }}
@@ -60,8 +61,8 @@
 <script>
 /* eslint-disable */
 export default {
-  name: "autocomplete",
-  template: "#autocomplete",
+  name: "Search",
+  template: "#Search",
   props: {
     items: {
       type: Array,
@@ -108,12 +109,13 @@ export default {
       });
     },
     setResult(result) {
+      this.arrowCounter = -1;
       this.$emit("suggestionClick", result);
       this.search = result;
       this.isOpen = false;
     },
     onArrowDown(evt) {
-      if (this.arrowCounter < this.results.length) {
+      if (this.arrowCounter < this.items.length) {
         this.arrowCounter = this.arrowCounter + 1;
       }
     },
@@ -123,12 +125,28 @@ export default {
       }
     },
     onEnter() {
-      this.search = this.results[this.arrowCounter];
+      this.search = this.items[this.arrowCounter];
       this.isOpen = false;
-      this.arrowCounter = -1;
+      // this.arrowCounter = -1;
     },
     handleClickOutside(evt) {
       if (!this.$el.contains(evt.target)) {
+        this.isOpen = false;
+        // this.arrowCounter = -1;
+      }
+    },
+    selectValue(evt) {
+      console.log("Counter: {}", this.arrowCounter);
+      let search = this.items[this.arrowCounter];
+      console.log("Items: {}", this.items);
+      console.log(
+        "arrow: {}",
+        this.items[this.arrowCounter],
+        this.arrowCounter
+      );
+
+      if (evt.keyCode == 13) {
+        this.search = search;
         this.isOpen = false;
         this.arrowCounter = -1;
       }
@@ -168,24 +186,12 @@ export default {
   /* background-color: #fff;  */
 }
 
-.autocomplete-result.is-active,
+.is-active,
 .autocomplete-result:hover {
-  background-color: #4aae9b;
-  color: white;
-}
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+  z-index: 1;
+  color: #495057;
+  text-decoration: none;
+  background-color: #f8f9fa;
 }
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: searchfield-cancel-button;
