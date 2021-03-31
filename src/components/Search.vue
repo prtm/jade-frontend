@@ -16,7 +16,7 @@
       <div class="input-group-append">
         <button
           type="button"
-          class="btn btn-primary px-3"
+          class="btn btn-search px-3"
           @click="searchBtnClick"
         >
           <svg
@@ -170,5 +170,10 @@ export default {
 }
 input[type="search"]::-webkit-search-cancel-button {
   -webkit-appearance: searchfield-cancel-button;
+}
+.btn-search {
+  color: white;
+  background-color: #212629;
+  border-color: #212629;
 }
 </style>

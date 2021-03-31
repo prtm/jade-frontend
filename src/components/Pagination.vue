@@ -12,7 +12,7 @@
       type="button"
       class="btn btn-sm btn-outline-secondary"
       v-for="page in pages.slice(currentPage - 1, currentPage + 10)"
-      :class="page == currentPage ? 'text-primary' : 'text-secondary'"
+      :class="page == currentPage ? 'text-pagination-btn' : 'text-secondary'"
       :key="page"
       @click="onButtonClick(page)"
     >
@@ -51,7 +51,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.text-primary {
+.text-pagination-btn {
   color: darkorange !important;
 }
 </style>
