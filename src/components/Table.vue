@@ -20,8 +20,8 @@
 <script>
 /* eslint-disable */
 export default {
-  name: "table",
-  template: "#table",
+  name: "data_table",
+  template: "#data_table",
   props: {
     headerList: {
       type: Array,

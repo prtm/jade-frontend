@@ -95,7 +95,7 @@ export default {
     onChange() {
       this.$emit("onInputChange", this.search);
       this.setSuggestionsDropdown(true);
-      this.resetArrowState();
+      this.resetSelectedSuggestionIndex();
     },
     suggestionClick(result) {
       this.$emit("suggestionClick", result);
