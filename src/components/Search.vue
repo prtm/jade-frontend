@@ -22,7 +22,6 @@
         id="inputSearch"
         @input="onChange"
         v-model="search"
-        @keyup="selectValue"
         @keyup.down="onArrowDown"
         @keyup.up="onArrowUp"
         @keyup.enter="onEnter"
@@ -74,17 +73,11 @@ export default {
       required: false,
       default: "Search...",
     },
-    isAsync: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
   },
 
   data() {
     return {
       isOpen: false,
-      results: [],
       search: "",
       isLoading: false,
       arrowCounter: 0,
@@ -95,18 +88,7 @@ export default {
   methods: {
     onChange() {
       this.$emit("onInputChange", this.search);
-      if (this.isAsync) {
-        this.isLoading = true;
-      } else {
-        this.filterResults();
-        this.isOpen = true;
-      }
-    },
-
-    filterResults() {
-      this.results = this.items.filter((item) => {
-        return item.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
-      });
+      this.isOpen = true;
     },
     setResult(result) {
       this.arrowCounter = -1;
@@ -127,41 +109,17 @@ export default {
     onEnter() {
       this.search = this.items[this.arrowCounter];
       this.isOpen = false;
-      // this.arrowCounter = -1;
+      this.$emit("suggestionClick", this.search);
+      this.arrowCounter = -1;
     },
     handleClickOutside(evt) {
       if (!this.$el.contains(evt.target)) {
         this.isOpen = false;
-        // this.arrowCounter = -1;
       }
     },
-    selectValue(evt) {
-      console.log("Counter: {}", this.arrowCounter);
-      let search = this.items[this.arrowCounter];
-      console.log("Items: {}", this.items);
-      console.log(
-        "arrow: {}",
-        this.items[this.arrowCounter],
-        this.arrowCounter
-      );
-
-      if (evt.keyCode == 13) {
-        this.search = search;
-        this.isOpen = false;
-        this.arrowCounter = -1;
-      }
+    mounted() {
+      document.addEventListener("click", this.handleClickOutside);
     },
-  },
-  watch: {
-    items: function (val, oldValue) {
-      if (val.length !== oldValue.length) {
-        this.results = val;
-        this.isLoading = false;
-      }
-    },
-  },
-  mounted() {
-    document.addEventListener("click", this.handleClickOutside);
   },
 };
 </script>
