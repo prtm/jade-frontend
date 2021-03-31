@@ -1,8 +1,7 @@
 /* eslint-disable */
 import axios from 'axios';
-import { settings } from './settings';
 
-const API_SERVER = settings.API_SERVER;
+const API_SERVER = process.env.VUE_APP_SERVER_URL;
 
 export const apiCall = ({ url, method, ...args }) =>
     new Promise((resolve, reject) => {

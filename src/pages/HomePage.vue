@@ -42,7 +42,7 @@
             tabindex="-1"
             role="button"
             aria-disabled="true"
-            :href="`https://awesome-jade.herokuapp.com/market/download-bhav-data/?q=${searchedName}`"
+            :href="`${process.env.VUE_APP_SERVER_URL}/market/download-bhav-data/?q=${searchedName}`"
           >
             Download CSV
           </a>
