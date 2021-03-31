@@ -135,8 +135,11 @@ export default {
         this.pages.push(index);
       }
     },
+    // on suggestion select
     searchDetailsbyExactName(value) {
-      // on click of suggestion
+      if (value.length < 2) {
+        return;
+      }
       this.isLoading = true;
       this.lastSearchInputLength = value.length;
       const url = `/market/search-by-extract-name/?q=${value}`;
@@ -153,8 +156,11 @@ export default {
           this.isLoading = false;
         });
     },
+    // on search without suggestion
     searchDetailsbyNamePrefix(value) {
-      // on click of suggestion
+      if (value.length < 2) {
+        return;
+      }
       this.isLoading = true;
       this.lastSearchInputLength = value.length;
       const url = `/market/search/?q=${value}`;
