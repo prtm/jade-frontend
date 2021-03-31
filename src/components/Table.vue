@@ -1,5 +1,5 @@
 <template>
-  <table id="data-table" class="table table-striped">
+  <table id="data-table" class="table table-striped table-responsive">
     <thead class="thead-dark">
       <tr>
         <th class="text-left" v-for="(row, i) in headerList" :key="i">

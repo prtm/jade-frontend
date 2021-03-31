@@ -50,15 +50,13 @@
         </div>
       </div>
       <div class="col-md-9 mt-2">
-        <div>
-          <Table
-            :headerList="headerList"
-            :bodyData="tableDisplayData"
-            :isBodyShown="!isLoading"
-          />
-          <div v-if="isLoading" class="mt-5 mb-2 h-100">
-            <Loader />
-          </div>
+        <Table
+          :headerList="headerList"
+          :bodyData="tableDisplayData"
+          :isBodyShown="!isLoading"
+        />
+        <div v-if="isLoading" class="mt-5 mb-2 h-100">
+          <Loader />
         </div>
         <div class="row">
           <div v-if="!isLoading & (totalCount > perPage)">
