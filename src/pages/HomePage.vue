@@ -1,4 +1,15 @@
 <template>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <svg height="24" width="60" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <a xlink:href="https://www.w3schools.com/graphics/" target="_blank">
+            <text x="0" y="15" fill="orange">Jade</text>
+          </a>
+        </svg>
+      </a>
+    </div>
+  </nav>
   <div class="container-fluid h-100 pl-4 pr-4">
     <div class="row h-100">
       <div class="col-md-3 pt-2 pb-2 side-bar">
@@ -224,5 +235,10 @@ a {
 }
 .side-bar-header {
   font-size: 1.3rem;
+}
+
+.btn-primary {
+  background-color: darkorange;
+  border-color: orange;
 }
 </style>
