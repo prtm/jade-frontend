@@ -61,7 +61,7 @@
           </div>
         </div>
         <div class="row">
-          <div v-if="(displayData.length > perPage) & !isLoading">
+          <div v-if="!isLoading & (totalCount > perPage)">
             <Pagination
               @onButtonClick="updatePage"
               :currentPage="currentPage"
@@ -83,9 +83,7 @@ import Table from "../components/Table.vue";
 
 export default {
   name: "HomePage",
-  props: {
-    msg: String,
-  },
+
   data() {
     return {
       baseURL: process.env.VUE_APP_SERVER_URL,
