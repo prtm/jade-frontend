@@ -53,7 +53,7 @@
         <div>
           <Table
             :headerList="headerList"
-            :displayData="displayData"
+            :displayData="tableDisplayData"
             :isBodyShown="!isLoading"
           />
           <div v-if="isLoading" class="mt-5 mb-2 h-100">
@@ -110,7 +110,7 @@ export default {
     },
   },
   computed: {
-    displayData() {
+    tableDisplayData() {
       return this.paginate(this.bhavData);
     },
   },

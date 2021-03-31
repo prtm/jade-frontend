@@ -11,12 +11,12 @@
     <button
       type="button"
       class="btn btn-sm btn-outline-secondary"
-      v-for="pageNumber in pages.slice(currentPage - 1, currentPage + 10)"
-      :class="pageNumber == currentPage ? 'text-primary' : 'text-secondary'"
-      :key="pageNumber"
-      @click="onButtonClick(pageNumber)"
+      v-for="page in pages.slice(currentPage - 1, currentPage + 10)"
+      :class="page == currentPage ? 'text-primary' : 'text-secondary'"
+      :key="page"
+      @click="onButtonClick(page)"
     >
-      {{ pageNumber }}
+      {{ page }}
     </button>
     <button
       type="button"
@@ -47,8 +47,8 @@ export default {
   },
 
   methods: {
-    onButtonClick(pageNumber) {
-      this.$emit("onButtonClick", pageNumber);
+    onButtonClick(page) {
+      this.$emit("onButtonClick", page);
     },
   },
 };
