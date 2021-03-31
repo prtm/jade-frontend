@@ -53,7 +53,7 @@
         <div>
           <Table
             :headerList="headerList"
-            :displayData="tableDisplayData"
+            :bodyData="tableDisplayData"
             :isBodyShown="!isLoading"
           />
           <div v-if="isLoading" class="mt-5 mb-2 h-100">

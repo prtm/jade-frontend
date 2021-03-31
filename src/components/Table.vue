@@ -8,7 +8,7 @@
       </tr>
     </thead>
     <tbody v-if="isBodyShown">
-      <tr v-for="(row, i) in displayData" :key="i">
+      <tr v-for="(row, i) in bodyData" :key="i">
         <td class="text-left" v-for="(key, j) in headerList" :key="j">
           {{ row[key] }}
         </td>
@@ -27,7 +27,7 @@ export default {
       type: Array,
       default: [],
     },
-    displayData: {
+    bodyData: {
       type: Array,
       default: [],
     },

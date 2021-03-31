@@ -36,7 +36,7 @@
       <ul
         id="autocomplete-results"
         style="display: grid"
-        v-show="isOpen"
+        v-show="isSuggestionsDropdownOpen"
         class="list-group autocomplete-results"
       >
         <li class="loading list-group-item" v-if="isLoading">
@@ -48,7 +48,7 @@
           :key="i"
           @click="suggestionClick(result)"
           class="list-group-item list-group-item-action"
-          :class="{ 'is-active': i === arrowCounter }"
+          :class="{ 'is-active': i === selectedSuggestionIndex }"
         >
           {{ result }}
         </li>
@@ -77,48 +77,56 @@ export default {
 
   data() {
     return {
-      isOpen: false,
+      isSuggestionsDropdownOpen: false,
       search: "",
       isLoading: false,
-      arrowCounter: 0,
+      selectedSuggestionIndex: -1,
       currentInputLength: 0,
     };
   },
 
   methods: {
+    resetSelectedSuggestionIndex() {
+      this.selectedSuggestionIndex = -1;
+    },
+    setSuggestionsDropdown(isOpened) {
+      this.isSuggestionsDropdownOpen = isOpened;
+    },
     onChange() {
       this.$emit("onInputChange", this.search);
-      this.isOpen = true;
+      this.setSuggestionsDropdown(true);
+      this.resetArrowState();
     },
     suggestionClick(result) {
       this.$emit("suggestionClick", result);
-      this.arrowCounter = -1;
+      this.resetSelectedSuggestionIndex();
       this.search = result;
-      this.isOpen = false;
+      this.setSuggestionsDropdown(false);
     },
-    onArrowDown(evt) {
-      if (this.arrowCounter < this.items.length) {
-        this.arrowCounter = this.arrowCounter + 1;
+    onArrowDown() {
+      if (this.selectedSuggestionIndex < this.items.length) {
+        this.selectedSuggestionIndex = this.selectedSuggestionIndex + 1;
       }
     },
     onArrowUp() {
-      if (this.arrowCounter > 0) {
-        this.arrowCounter = this.arrowCounter - 1;
+      if (this.selectedSuggestionIndex > 0) {
+        this.selectedSuggestionIndex = this.selectedSuggestionIndex - 1;
       }
     },
     onEnter() {
-      this.isOpen = false;
-      if ((this.arrowCounter = -1)) {
+      this.setSuggestionsDropdown(false);
+      if (this.selectedSuggestionIndex == -1) {
         this.$emit("searchByPrefix", this.search);
       } else {
-        this.search = this.items[this.arrowCounter];
+        this.search = this.items[this.selectedSuggestionIndex];
         this.$emit("suggestionClick", this.search);
       }
-      this.arrowCounter = -1;
+      this.resetSelectedSuggestionIndex();
     },
     handleClickOutside(evt) {
       if (!this.$el.contains(evt.target)) {
-        this.isOpen = false;
+        this.setSuggestionsDropdown(false);
+        this.resetSelectedSuggestionIndex();
       }
     },
     mounted() {
