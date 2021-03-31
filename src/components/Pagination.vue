@@ -41,11 +41,6 @@ export default {
     },
     pages: Array,
   },
-
-  data() {
-    return {};
-  },
-
   methods: {
     onButtonClick(page) {
       this.$emit("onButtonClick", page);
