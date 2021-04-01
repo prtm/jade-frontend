@@ -59,9 +59,9 @@
           <Loader />
         </div>
         <div class="row">
-          <div v-if="!isLoading & (totalCount > perPage)">
+          <div v-if="!isLoading & (totalItems > perPageItems)">
             <Pagination
-              @onButtonClick="updatePage"
+              @onButtonClick="onPageSelect"
               :currentPage="currentPage"
               :pages="pages"
             />
@@ -85,25 +85,24 @@ export default {
   data() {
     return {
       baseURL: process.env.VUE_APP_SERVER_URL,
-      isLoading: false,
-      searchSuggestions: [],
-      value: "",
-      lastUpdated: "",
       bhavData: [],
-      totalCount: 0,
-      headerList: ["SC_NAME", "SC_CODE", "OPEN", "CLOSE", "LOW", "HIGH"],
       currentPage: 1,
-      perPage: 15,
-      pages: [],
+      headerList: ["SC_NAME", "SC_CODE", "OPEN", "CLOSE", "LOW", "HIGH"],
+      isLoading: false,
       lastSearchInputLength: 0,
+      lastUpdated: "",
+      pages: [],
+      perPageItems: 15,
       searchedName: "",
+      searchSuggestions: [],
+      totalItems: 0,
     };
   },
   mounted() {
     this.getInitialBhavData();
   },
   watch: {
-    totalCount() {
+    totalItems() {
       this.setPages();
     },
   },
@@ -120,14 +119,19 @@ export default {
   },
   methods: {
     paginate(data) {
+      console.log(data);
       let currentPage = this.currentPage;
-      let perPage = this.perPage;
-      let from = currentPage * perPage - perPage;
-      let to = currentPage * perPage;
+      let perPageItems = this.perPageItems;
+      let from = currentPage * perPageItems - perPageItems;
+      let to = currentPage * perPageItems;
+      console.log("currentPage:", currentPage);
+      console.log("perPageItems:", perPageItems);
+      console.log("from:", from);
+      console.log("to:", to);
       return data.slice(from, to);
     },
     setPages() {
-      let numberOfPages = Math.ceil(this.totalCount / this.perPage);
+      let numberOfPages = Math.ceil(this.totalItems / this.perPageItems);
       for (let index = 1; index <= numberOfPages; index++) {
         this.pages.push(index);
       }
@@ -143,7 +147,7 @@ export default {
       apiCall({ url, method: "get" })
         .then((response) => {
           this.bhavData = [response.results];
-          this.totalCount = 1;
+          this.totalItems = 1;
           this.searchedName = value;
           this.isLoading = false;
         })
@@ -163,7 +167,7 @@ export default {
       apiCall({ url, method: "get" })
         .then((response) => {
           this.bhavData = response.results;
-          this.totalCount = response.results.length;
+          this.totalItems = response.results.length;
           this.searchedName = value;
           this.isLoading = false;
         })
@@ -172,13 +176,14 @@ export default {
           this.isLoading = false;
         });
     },
+    // get initial home page data
     getInitialBhavData() {
       const url = `/market/`;
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
           this.bhavData = response.results;
-          this.totalCount = response.count;
+          this.totalItems = response.count;
           this.lastUpdated = response["last_updated"];
           this.isLoading = false;
         })
@@ -188,6 +193,7 @@ export default {
         });
     },
     onInputChange(q) {
+      // get suggestions
       if (q.length >= 2) {
         const url = `/market/search-suggestions/?q=${q}`;
         apiCall({ url, method: "get" })
@@ -198,6 +204,7 @@ export default {
             console.log(error);
           });
       } else {
+        // get home page data
         if (this.lastSearchInputLength > q.length) {
           this.getInitialBhavData();
         }
@@ -206,19 +213,21 @@ export default {
       }
       this.lastSearchInputLength = q.length;
     },
-    updatePage(newPageValue) {
+    onPageSelect(newPageValue) {
       if (this.currentPage == newPageValue) {
         return;
       }
       this.currentPage = newPageValue;
-      const start = this.perPage * (newPageValue - 1);
-      const stop = this.perPage * newPageValue;
+      const start = this.perPageItems * (newPageValue - 1);
+      const stop = this.perPageItems * newPageValue;
+      console.log("start", start);
+      console.log("stop", stop);
       const url = `/market/?start=${start}=&stop=${stop}`;
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
           this.bhavData = response.results;
-          this.totalCount = response.count;
+          this.totalItems = response.count;
           this.isLoading = false;
         })
         .catch((error) => {
