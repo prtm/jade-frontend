@@ -105,6 +105,9 @@ export default {
   },
   methods: {
     // on suggestion select
+    resetCurrentPage() {
+      this.currentPage = 1;
+    },
     searchDetailsbyExactName(value) {
       if (value.length < 2) {
         return;
@@ -114,6 +117,7 @@ export default {
       const url = `/market/search-by-extract-name/?q=${value}`;
       apiCall({ url, method: "get" })
         .then((response) => {
+          this.resetCurrentPage();
           this.bhavData = [response.results];
           this.totalItems = 1;
           this.searchedName = value;
@@ -134,6 +138,7 @@ export default {
       const url = `/market/search/?q=${value}`;
       apiCall({ url, method: "get" })
         .then((response) => {
+          this.resetCurrentPage();
           this.bhavData = response.results;
           this.totalItems = response.results.length;
           this.searchedName = value;
@@ -150,6 +155,7 @@ export default {
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
+          this.resetCurrentPage();
           this.bhavData = response.results;
           this.totalItems = response.count;
           this.lastUpdated = response["last_updated"];
@@ -171,6 +177,8 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+      } else if (this.currentPage > 1) {
+        this.onPageSelect(this.currentPage);
       } else {
         // get home page data
         if (this.lastSearchInputLength > q.length) {
