@@ -182,9 +182,6 @@ export default {
       this.lastSearchInputLength = q.length;
     },
     onPageSelect(newPageValue) {
-      if (this.currentPage == newPageValue) {
-        return;
-      }
       this.currentPage = newPageValue;
       const start = this.perPageItems * (newPageValue - 1);
       const stop = this.perPageItems * newPageValue;

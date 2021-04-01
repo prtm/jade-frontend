@@ -23,6 +23,7 @@
         v-for="page in pages"
         :class="{ 'text-secondary': page == currentPage }"
         :key="page"
+        :disabled="page == currentPage"
         @click="onButtonClick(page)"
       >
         {{ page }}
