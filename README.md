@@ -43,5 +43,5 @@ cp docs/env_example .env
 3. Run
 ```shell
 $ yarn dev
-# OR npm run dev
+# OR npm run serve
 ```
