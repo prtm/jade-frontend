@@ -1,15 +1,5 @@
 <template>
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <svg height="24" width="60" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <a xlink:href="https://www.w3schools.com/graphics/" target="_blank">
-            <text x="0" y="15" fill="orange">Jade</text>
-          </a>
-        </svg>
-      </a>
-    </div>
-  </nav>
+  <NavBar />
   <div class="container-fluid h-100 pl-4 pr-4">
     <div class="row h-100">
       <div class="col-md-3 py-3 px-3 side-bar">
@@ -21,7 +11,7 @@
           :items="searchSuggestions"
           @onInputChange="onInputChange"
         />
-        <div class="text-start font-weight-bold mb-2 mt-3 side-bar-header">
+        <div class="text-start font-weight-bold mb-2 mt-3 side-bar-header text-white">
           A BSE bhav browser for the activity that has taken place in the market
         </div>
         <div
@@ -29,12 +19,13 @@
             searchedName != '' ? 'visible' : 'invisible',
             'mt-2',
             'text-start',
+            'text-white',
           ]"
           style="font-size: 0.95rem"
         >
           Search Results For <strong>{{ searchedName }}</strong>
         </div>
-        <div v-if="lastUpdated != ''" class="mt-3 ml-1 text-start">
+        <div v-if="lastUpdated != ''" class="mt-3 ml-1 text-start text-white">
           Last Updated: <strong>{{ lastUpdated }}</strong>
         </div>
         <div class="mt-2 mb-3 ml-1 d-flex justify-content-left">
@@ -77,6 +68,7 @@
 <script>
 import { apiCall } from "@/utils/api";
 import Search from "../components/Search";
+import NavBar from "../components/NavBar.vue";
 import Loader from "../components/Loader.vue";
 import Pagination from "../components/Pagination.vue";
 import Table from "../components/Table.vue";
@@ -103,9 +95,10 @@ export default {
     this.getInitialBhavData();
   },
   components: {
-    Search,
     Loader,
+    NavBar,
     Pagination,
+    Search,
     Table,
   },
   methods: {
@@ -215,7 +208,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .side-bar {
-  background-color: #f2f2f2;
+  background-color: #312a2b;
 }
 .side-bar-header {
   font-size: 1.3rem;
