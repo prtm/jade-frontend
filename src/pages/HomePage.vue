@@ -193,9 +193,7 @@ export default {
       this.currentPage = newPageValue;
       const start = this.perPageItems * (newPageValue - 1);
       const stop = this.perPageItems * newPageValue;
-      console.log("start", start);
-      console.log("stop", stop);
-      const url = `/market/?start=${start}=&stop=${stop}`;
+      const url = `/market/?start=${start}&stop=${stop - 1}`;
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
