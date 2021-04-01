@@ -127,7 +127,6 @@ export default {
       return data.slice(from, to);
     },
     setPages() {
-      console.log(this.totalCount);
       let numberOfPages = Math.ceil(this.totalCount / this.perPage);
       for (let index = 1; index <= numberOfPages; index++) {
         this.pages.push(index);
@@ -143,7 +142,6 @@ export default {
       const url = `/market/search-by-extract-name/?q=${value}`;
       apiCall({ url, method: "get" })
         .then((response) => {
-          console.log(response);
           this.bhavData = [response.results];
           this.totalCount = 1;
           this.searchedName = value;
@@ -164,7 +162,6 @@ export default {
       const url = `/market/search/?q=${value}`;
       apiCall({ url, method: "get" })
         .then((response) => {
-          console.log(response);
           this.bhavData = response.results;
           this.totalCount = response.results.length;
           this.searchedName = value;
@@ -180,7 +177,6 @@ export default {
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
-          console.log(response);
           this.bhavData = response.results;
           this.totalCount = response.count;
           this.lastUpdated = response["last_updated"];
@@ -196,7 +192,6 @@ export default {
         const url = `/market/search-suggestions/?q=${q}`;
         apiCall({ url, method: "get" })
           .then((response) => {
-            console.log(response);
             this.searchSuggestions = response.results;
           })
           .catch((error) => {
@@ -222,7 +217,6 @@ export default {
       this.isLoading = true;
       apiCall({ url, method: "get" })
         .then((response) => {
-          console.log(response);
           this.bhavData = response.results;
           this.totalCount = response.count;
           this.isLoading = false;
