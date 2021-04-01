@@ -45,14 +45,15 @@
             aria-disabled="true"
             :href="`${baseURL}/market/download-bhav-data/?q=${searchedName}`"
           >
+            <i class="fas fa-download"></i>
             Download CSV
           </a>
         </div>
       </div>
-      <div class="col-md-9 mt-2 pb-4 table-scroll">
+      <div class="col-md-9 mt-3 pb-4 table-scroll">
         <Table
           :headerList="headerList"
-          :bodyData="tableDisplayData"
+          :bodyData="bhavData"
           :isBodyShown="!isLoading"
         />
         <div v-if="isLoading" class="mt-5 mb-2 h-100">
@@ -63,7 +64,8 @@
             <Pagination
               @onButtonClick="onPageSelect"
               :currentPage="currentPage"
-              :pages="pages"
+              :perPageItems="perPageItems"
+              :totalItems="totalItems"
             />
           </div>
         </div>
@@ -91,7 +93,6 @@ export default {
       isLoading: false,
       lastSearchInputLength: 0,
       lastUpdated: "",
-      pages: [],
       perPageItems: 15,
       searchedName: "",
       searchSuggestions: [],
@@ -101,16 +102,6 @@ export default {
   mounted() {
     this.getInitialBhavData();
   },
-  watch: {
-    totalItems() {
-      this.setPages();
-    },
-  },
-  computed: {
-    tableDisplayData() {
-      return this.paginate(this.bhavData);
-    },
-  },
   components: {
     Search,
     Loader,
@@ -118,24 +109,6 @@ export default {
     Table,
   },
   methods: {
-    paginate(data) {
-      console.log(data);
-      let currentPage = this.currentPage;
-      let perPageItems = this.perPageItems;
-      let from = currentPage * perPageItems - perPageItems;
-      let to = currentPage * perPageItems;
-      console.log("currentPage:", currentPage);
-      console.log("perPageItems:", perPageItems);
-      console.log("from:", from);
-      console.log("to:", to);
-      return data.slice(from, to);
-    },
-    setPages() {
-      let numberOfPages = Math.ceil(this.totalItems / this.perPageItems);
-      for (let index = 1; index <= numberOfPages; index++) {
-        this.pages.push(index);
-      }
-    },
     // on suggestion select
     searchDetailsbyExactName(value) {
       if (value.length < 2) {
