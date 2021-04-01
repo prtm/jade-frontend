@@ -162,7 +162,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 .btn-search {
   color: white;
-  background-color: #212629;
-  border-color: #212629;
+  background-color: #3d3d3d;
+  border-color: #3d3d3d;
 }
 </style>

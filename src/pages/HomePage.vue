@@ -11,7 +11,9 @@
           :items="searchSuggestions"
           @onInputChange="onInputChange"
         />
-        <div class="text-start font-weight-bold mb-2 mt-3 side-bar-header text-white">
+        <div
+          class="text-start font-weight-bold mb-2 mt-3 side-bar-header text-white"
+        >
           A BSE bhav browser for the activity that has taken place in the market
         </div>
         <div
@@ -207,17 +209,20 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.side-bar {
-  background-color: #312a2b;
-}
 .side-bar-header {
   font-size: 1.3rem;
 }
 
+@media (min-width: 768px) {
+  .side-bar {
+    border-right: 1px solid white;
+  }
+}
+
 .btn-download {
   color: white;
-  background-color: darkorange;
-  border-color: orange;
+  background-color: #ba4c00;
+  border-color: #ba4c00;
 }
 
 .table-scroll {
