@@ -37,7 +37,7 @@
         <div v-if="lastUpdated != ''" class="mt-3 ml-1 text-start">
           Last Updated: <strong>{{ lastUpdated }}</strong>
         </div>
-        <div class="mt-2 ml-1 d-flex justify-content-left">
+        <div class="mt-2 mb-3 ml-1 d-flex justify-content-left">
           <a
             class="btn btn-download mt-2"
             tabindex="-1"
@@ -49,7 +49,7 @@
           </a>
         </div>
       </div>
-      <div class="col-md-9 mt-2">
+      <div class="col-md-9 mt-2 pb-4 table-scroll">
         <Table
           :headerList="headerList"
           :bodyData="tableDisplayData"
@@ -249,5 +249,9 @@ export default {
   color: white;
   background-color: darkorange;
   border-color: orange;
+}
+
+.table-scroll {
+  overflow-x: auto;
 }
 </style>
