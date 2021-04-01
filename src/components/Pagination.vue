@@ -4,7 +4,7 @@
       <button
         type="button"
         class="btn btn-sm btn-pagination"
-        :disabled="startPage - perPageItems <= 1"
+        :disabled="startPage - 1 <= 1"
         @click="onButtonClick(startPage - perPageItems)"
       >
         <i class="fas fa-angle-double-left"></i>
@@ -12,8 +12,8 @@
       <button
         type="button"
         class="btn btn-sm btn-pagination"
-        :disabled="startPage <= 1"
-        @click="onButtonClick(startPage - 1)"
+        :disabled="currentPage <= 1"
+        @click="onButtonClick(currentPage - 1)"
       >
         <i class="fas fa-chevron-left"></i>
       </button>
@@ -30,16 +30,16 @@
       </button>
       <button
         type="button"
-        @click="onButtonClick(endPage + 1)"
-        :disabled="endPage >= totalPages"
+        @click="onButtonClick(currentPage + 1)"
+        :disabled="currentPage >= totalPages"
         class="btn btn-sm btn-pagination"
       >
         <i class="fas fa-chevron-right"></i>
       </button>
       <button
         type="button"
-        @click="onButtonClick(endPage + perPageItems)"
-        :disabled="endPage + perPageItems >= totalPages"
+        @click="onButtonClick(startPage + perPageItems)"
+        :disabled="endPage + 1 >= totalPages"
         class="btn btn-sm btn-pagination"
       >
         <i class="fas fa-angle-double-right"></i>
@@ -81,9 +81,9 @@ export default {
     };
   },
   mounted() {
+    this.setTotalPages();
     this.setStartPage();
     this.setEndPage();
-    this.setTotalPages();
     this.setPages();
   },
   methods: {
@@ -107,7 +107,7 @@ export default {
     setEndPage() {
       this.endPage = Math.min(
         this.startPage + this.perPageItems - 1,
-        this.totalItems
+        this.totalPages
       );
     },
   },
