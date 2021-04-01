@@ -12,7 +12,7 @@
   </nav>
   <div class="container-fluid h-100 pl-4 pr-4">
     <div class="row h-100">
-      <div class="col-md-3 pt-2 pb-2 side-bar">
+      <div class="col-md-3 py-3 px-3 side-bar">
         <Search
           placeholder="Search Name"
           @searchByPrefix="searchDetailsbyNamePrefix"
@@ -215,7 +215,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .side-bar {
-  background-color: #e5e5e5;
+  background-color: #f2f2f2;
 }
 .side-bar-header {
   font-size: 1.3rem;
